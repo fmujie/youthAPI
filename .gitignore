@@ -3,6 +3,7 @@
 /public/storage
 /public/app
 /public/uploads
+/public/lafImg
 /storage/*.key
 /vendor
 /.idea
