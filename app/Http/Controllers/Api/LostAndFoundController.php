@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Alert;
+use function GuzzleHttp\Psr7\str;
 use http\Env\Response;
 use Redirect;
 use Carbon\Carbon;
@@ -32,19 +33,19 @@ class LostAndFoundController extends Controller
      */
     public function finderOrTheOwnerRelease(Request $Request, $method)
     {
-        $thingName = $Request->input('thingName');
-        $time = $Request->input('time');
-        $place = $Request->input('place');
-        $detail = $Request->input('detail');
-        $personName = $Request->input('personName');
-        $phoneNumber = $Request->input('phoneNumber');
-        $status = 1;
+        $thingName = isset($Request['thingName']) ? $Request['thingName'] : null;
+        $time = isset($Request['time']) ? $Request['time'] : time();
+        $place = isset($Request['place']) ? $Request['place'] : '山东理工大学';
+        $detail = isset($Request['detail']) ? $Request['detail'] : null;
+        $personName = isset($Request['personName']) ? $Request['personName'] : null;
+        $phoneNumber = isset($Request['phoneNumber']) ? $Request['phoneNumber'] : null;
         $thingImg = isset($Request['imgs']) ? $Request['imgs'] : 0;
-        if ($place == null) {
+        $status = 1;
+        if ($place == null || $time == null || $personName == null || $phoneNumber == null) {
             return response()->json([
                 'status' => 'warning',
                 'msg' => '请完善信息'
-            ], 412);
+            ]);
         }
         $pattern = "/^1[34578]\d{9}$/";
         $res = preg_match($pattern, $phoneNumber);
@@ -52,8 +53,10 @@ class LostAndFoundController extends Controller
             return response()->json([
                 'status' => 'warning',
                 'msg' => '请输入正确手机号码'
-            ], 412);
+            ]);
         }
+        unset($res);
+        unset($pattern);
         if ($method == 1) {
             $insertResult = DB::table($this->tablelost)->insert(
                 [
@@ -86,12 +89,12 @@ class LostAndFoundController extends Controller
             return response()->json([
                 'status' => 'ok',
                 'msg' => '发布成功'
-            ], 201);
+            ]);
         } else {
             return response()->json([
                 'status' => 'error',
                 'msg' => '发布失败'
-            ], 200);
+            ]);
         }
     }
 
@@ -103,14 +106,24 @@ class LostAndFoundController extends Controller
      * @param         $method
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteOneData(request $Request, $id, $method)
+    public function deleteOneData(request $Request, $id = null, $method)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        var_dump($Request->input());
+        var_dump($Request['uName'],$Request['randKey']);
+        if (!isset($Request['randKey']) || !isset($Request['uName'])) {
             return response()->json([
                 'status' => 'warning',
-                'msg' => '权限不足'
-            ], 200);
+                'msg' => '字段缺失'
+            ]);
         }
+        $this->checkAdmin($Request->input('randKey'), $Request->input('uName'),false);
+
+//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true) || isset($Request['randKey']) || isset($Request['uName'])) {
+//            return response()->json([
+//                'status' => 'warning',
+//                'msg' => '权限不足'
+//            ]);
+//        }
         if ($method == 1) {
             $deleteresults = DB::delete("delete from $this->tablelost where id = ?", [$id]);
         } else if ($method == 2) {
@@ -122,12 +135,12 @@ class LostAndFoundController extends Controller
             return response()->json([
                 'status' => 'ok',
                 'msg' => '删除成功'
-            ], 201);
+            ]);
         }
         return response()->json([
             'status' => 'error',
             'msg' => '删除失败'
-        ], 200);
+        ]);
     }
 
     /**
@@ -143,11 +156,14 @@ class LostAndFoundController extends Controller
             return response()->json([
                 'status' => 'error',
                 'msg' => '无效验证数据'
-            ], 200);
+            ]);
         }
-        $id = $Request->input('id');
-        $status = $Request['status'];
-        $return_at = date(now());
+
+
+        $id = isset($Request['id']) ? $Request['id'] : null;
+        $status = isset($Request['status']) ? $Request['status'] : null;
+        if ($id == null || $status == null)
+            $return_at = date(now());
         if ($method == 1) {
             $check = DB::table($this->tablelost)->where('id', $id)->first();
             if ($check && $Request['checkUser'] == $check->lost_person && $Request['checkPhone'] == $check->lost_phone) {
@@ -193,12 +209,20 @@ class LostAndFoundController extends Controller
      */
     public function updateData($method, request $Request)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        if (!isset($Request['randkey']) || !isset($Request['uName'])) {
             return response()->json([
                 'status' => 'warning',
-                'msg' => '权限不足'
-            ], 200);
+                'msg' => '字段缺失'
+            ]);
         }
+        $this->checkAdmin($Request->input('randKey'), $Request->input('uName'),false);
+
+//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+//            return response()->json([
+//                'status' => 'warning',
+//                'msg' => '权限不足'
+//            ]);
+//        }
         $someThing = isset($Request['someThing']) ? $Request['someThing'] : null;
         $time = isset($Request['time']) ? $Request['time'] : null;
         $place = isset($Request['place']) ? $Request['place'] : null;
@@ -479,7 +503,17 @@ class LostAndFoundController extends Controller
      */
     private function checkAdmin($key = null, $name = null, $return = false)
     {
-        if (strlen($key) != 24 || strlen($name) < 5 || $key == NULL || $name == null || $name > 9) {
+
+        if($key == NULL || $name == null)
+        {
+            return '空数据';
+        }
+        if(strlen($key)  || strlen($name < 5) || strlen($name)> 9)
+        {
+            return '数据异常';
+        }
+
+        if (strlen($key) != 24 || strlen($name) < 5  || $name > 9) {
             if ($return) {
                 return 0;
             } else {
@@ -490,6 +524,7 @@ class LostAndFoundController extends Controller
             }
         }
         $realKey = substr($key, 7, 8);
+       return ($key."-------".$realKey);
         try {
             $res = DB::table($this->tableadmin)->where('name', $name)->where('login_key', $realKey)->first();
         } catch (Exception $e) {
@@ -523,12 +558,19 @@ class LostAndFoundController extends Controller
      */
     public function delImg($img, Request $Request)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        if (!isset($Request['randkey']) || !isset($Request['uName'])) {
             return response()->json([
                 'status' => 'warning',
-                'msg' => '权限不足'
-            ], 200);
+                'msg' => '字段缺失'
+            ]);
         }
+        $this->checkAdmin($Request->input('randKey'), $Request->input('uName'),false);
+//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+//            return response()->json([
+//                'status' => 'warning',
+//                'msg' => '权限不足'
+//            ], 200);
+//        }
         $imgdir = public_path() . '/lafImg/';
         $imgdir = str_replace('\\', '/', $imgdir);
         $file = $imgdir . $img;
@@ -575,21 +617,23 @@ class LostAndFoundController extends Controller
         }
         $id = $isAdmin->id;
         $strs = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890qwertyuiopasdfghjklzxcvbnm1234567890";
-        $randString = substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 8);
-        $fakeStringB = substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 7);
+        $randString = substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 7);
+        $fakeStringB = substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 8);
+
         $fakeStringE = substr(str_shuffle($strs), mt_rand(0, strlen($strs) - 11), 9);
         $res = DB::table($this->tableadmin)->where('id', $id)->update(['login_key' => $randString, 'login_at' => date(now())]);
         if ($res) {
             return response()->json([
                 'status' => 'ok',
                 'msg' => '登录成功',
-                'key' => $fakeStringB . $randString . $fakeStringE
-            ], 201);
+                'key' => $fakeStringB . $randString . $fakeStringE,
+                'realKey'=>$randString
+            ]);
         } else {
             return response()->json([
                 'status' => 'error',
                 'msg' => '登陆失败',
-            ], 200);
+            ]);
         }
     }
 }
