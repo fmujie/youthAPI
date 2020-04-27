@@ -116,14 +116,12 @@ class LostAndFoundController extends Controller
                 'msg' => '字段缺失'
             ]);
         }
-        $this->checkAdmin($Request->input('randKey'), $Request->input('uName'),false);
-
-//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true) || isset($Request['randKey']) || isset($Request['uName'])) {
-//            return response()->json([
-//                'status' => 'warning',
-//                'msg' => '权限不足'
-//            ]);
-//        }
+        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true) || isset($Request['randKey']) || isset($Request['uName'])) {
+            return response()->json([
+                'status' => 'warning',
+                'msg' => '权限不足'
+            ]);
+        }
         if ($method == 1) {
             $deleteresults = DB::delete("delete from $this->tablelost where id = ?", [$id]);
         } else if ($method == 2) {
@@ -215,14 +213,13 @@ class LostAndFoundController extends Controller
                 'msg' => '字段缺失'
             ]);
         }
-        $this->checkAdmin($Request->input('randKey'), $Request->input('uName'),false);
 
-//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
-//            return response()->json([
-//                'status' => 'warning',
-//                'msg' => '权限不足'
-//            ]);
-//        }
+        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+            return response()->json([
+                'status' => 'warning',
+                'msg' => '权限不足'
+            ]);
+        }
         $someThing = isset($Request['someThing']) ? $Request['someThing'] : null;
         $time = isset($Request['time']) ? $Request['time'] : null;
         $place = isset($Request['place']) ? $Request['place'] : null;
@@ -564,13 +561,12 @@ class LostAndFoundController extends Controller
                 'msg' => '字段缺失'
             ]);
         }
-        $this->checkAdmin($Request->input('randKey'), $Request->input('uName'),false);
-//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
-//            return response()->json([
-//                'status' => 'warning',
-//                'msg' => '权限不足'
-//            ], 200);
-//        }
+        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+            return response()->json([
+                'status' => 'warning',
+                'msg' => '权限不足'
+            ], 200);
+        }
         $imgdir = public_path() . '/lafImg/';
         $imgdir = str_replace('\\', '/', $imgdir);
         $file = $imgdir . $img;
