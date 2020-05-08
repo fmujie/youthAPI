@@ -167,7 +167,8 @@ return [
         /*
          * Package Service Providers...
          */
-
+        Fmujie\BaiduSpeech\BaiduSpeechServiceProvider::class,
+        Fmujie\TulingApi\TulingApiServiceProvider::class,
         /*
          * Application Service Providers...
          */

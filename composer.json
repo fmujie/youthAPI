@@ -10,6 +10,8 @@
         "barryvdh/laravel-debugbar": "^3.2",
         "dingo/api": "2.0.0-alpha2",
         "fideloper/proxy": "~3.3",
+        "fmujie/baidu-speech-synthesis": "^1.0",
+        "fmujie/tuling": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
         "intervention/image": "^2.5",
         "jaeger/querylist": "^4.1",
