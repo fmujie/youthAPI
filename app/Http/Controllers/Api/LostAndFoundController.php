@@ -105,12 +105,66 @@ class LostAndFoundController extends Controller
      */
     public function deleteOneData(request $Request, $id, $method)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
-            return response()->json([
-                'status' => 'warning',
-                'msg' => '权限不足'
-            ], 200);
+
+        $power = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'));
+        switch ($power) {
+            case 11:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '空数据'
+                    ]);
+                    break;
+                }
+            case 12:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '请求数据异常'
+                    ]);
+                    break;
+                }
+            case 13:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '返回数据异常'
+                    ]);
+                    break;
+                }
+            case 14:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '权限异常'
+                    ]);
+                    break;
+                }
+            case 15:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '无权限'
+                    ]);
+                    break;
+                }
         }
+        if ($power < 5) {
+            return response()->json([
+                'status' => '',
+                'msg' => '无权限'
+            ]);
+        }
+
+
+//        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+//            return response()->json([
+//                'status' => 'warning',
+//                'msg' => '权限不足'
+//            ], 200);
+//        }
+
+//        die('end');
         if ($method == 1) {
             $deleteresults = DB::delete("delete from $this->tablelost where id = ?", [$id]);
         } else if ($method == 2) {
@@ -193,11 +247,54 @@ class LostAndFoundController extends Controller
      */
     public function updateData($method, request $Request)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        $power = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'));
+        switch ($power) {
+            case 11:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '空数据'
+                    ]);
+                    break;
+                }
+            case 12:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '请求数据异常'
+                    ]);
+                    break;
+                }
+            case 13:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '返回数据异常'
+                    ]);
+                    break;
+                }
+            case 14:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '权限异常'
+                    ]);
+                    break;
+                }
+            case 15:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '无权限'
+                    ]);
+                    break;
+                }
+        }
+        if ($power < 5) {
             return response()->json([
-                'status' => 'warning',
-                'msg' => '权限不足'
-            ], 200);
+                'status' => '',
+                'msg' => '无权限'
+            ]);
         }
         $someThing = isset($Request['someThing']) ? $Request['someThing'] : null;
         $time = isset($Request['time']) ? $Request['time'] : null;
@@ -477,40 +574,34 @@ class LostAndFoundController extends Controller
      * @param bool $return
      * @return \Illuminate\Http\JsonResponse|int
      */
-    private function checkAdmin($key = null, $name = null, $return = false)
+    private function checkAdmin($randKey = null, $uName = null)
     {
-        if (strlen($key) != 24 || strlen($name) < 5 || $key == NULL || $name == null || $name > 9) {
-            if ($return) {
-                return 0;
-            } else {
-                return response()->json([
-                    'status' => 'error',
-                    'msg' => '非法访问'
-                ]);
-            }
+
+        /**
+         * 11 空数据
+         * 12 请求数据异常
+         * 13 返回数据异常
+         * 14 权限异常
+         * 15 无权限
+         */
+        if ($randKey == NULL || $uName == null) {
+            return 11;
         }
-        $realKey = substr($key, 7, 8);
+
+        if (strlen($randKey) != 24 || strlen($uName) < 5 || $uName > 9) {
+            return 12;
+        }
+        $realKey = substr($randKey, 7, 8);
         try {
-            $res = DB::table($this->tableadmin)->where('name', $name)->where('login_key', $realKey)->first();
+            $res = DB::table($this->tableadmin)->where('name', $uName)->where('login_key', $realKey)->first();
         } catch (Exception $e) {
-            if ($return) {
-                return 0;
-            }
-            return response()->json([
-                'status' => 'error',
-                'msg' => '非法访问'
-            ]);
+            return 13;
         }
-        {
-            if ($return) {
-                return ($res || isset($res->power)) ? $res->power : 0;
-            }
-            if ($res && !$res->power > 4) {
-                return response()->json([
-                    'status' => 'error',
-                    'msg' => '非法访问'
-                ]);
-            }
+
+        if ($res) {
+            return isset($res->power) ? $res->power : 14;
+        } else {
+            return 15;
         }
     }
 
@@ -523,11 +614,54 @@ class LostAndFoundController extends Controller
      */
     public function delImg($img, Request $Request)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        $power = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'));
+        switch ($power) {
+            case 11:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '空数据'
+                    ]);
+                    break;
+                }
+            case 12:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '请求数据异常'
+                    ]);
+                    break;
+                }
+            case 13:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '返回数据异常'
+                    ]);
+                    break;
+                }
+            case 14:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '权限异常'
+                    ]);
+                    break;
+                }
+            case 15:
+                {
+                    return response()->json([
+                        'status' => 'error',
+                        'msg' => '无权限'
+                    ]);
+                    break;
+                }
+        }
+        if ($power < 5) {
             return response()->json([
-                'status' => 'warning',
-                'msg' => '权限不足'
-            ], 200);
+                'status' => '',
+                'msg' => '无权限'
+            ]);
         }
         $imgdir = public_path() . '/lafImg/';
         $imgdir = str_replace('\\', '/', $imgdir);
@@ -563,8 +697,8 @@ class LostAndFoundController extends Controller
     {
         if (!isset($Request['name']) || (!isset($Request['pass']))) {
             return response()->json([
-                'status'=>'error',
-                'msg'=>'参数异常'
+                'status' => 'error',
+                'msg' => '参数异常'
             ]);
         }
         $name = $Request['name'];
