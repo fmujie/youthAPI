@@ -226,7 +226,8 @@ $api->version('v1', [
         ->middleware('api.auth'); //删除对应周次卫生成绩,接收weeks参数为数组
     $api->post('oa/hygiene/import', 'OAController@importHygiene')
         ->middleware('api.auth');        //宿舍卫生成绩导入
-
+    $api->post('oa/reception/conversation', 'ConversationController@conversation');  // 与用户交互（文本交流）
+    $api->post('oa/reception/speechSynthesis', 'ConversationController@speechSynthesis'); // 语音合成（百度AI语音合成）
     //OA办公系统结束
 
     //全局数据
