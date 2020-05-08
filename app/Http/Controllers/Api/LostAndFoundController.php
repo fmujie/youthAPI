@@ -105,12 +105,20 @@ class LostAndFoundController extends Controller
      */
     public function deleteOneData(request $Request, $id, $method)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        $checkRes = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true);
+        //dd($checkRes);
+        if (!$checkRes) {
             return response()->json([
                 'status' => 'warning',
                 'msg' => '权限不足'
             ], 200);
         }
+        //if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+          //  return response()->json([
+            //    'status' => 'warning',
+              //  'msg' => '权限不足'
+           // ], 200);
+        //}
         if ($method == 1) {
             $deleteresults = DB::delete("delete from $this->tablelost where id = ?", [$id]);
         } else if ($method == 2) {
@@ -193,7 +201,11 @@ class LostAndFoundController extends Controller
      */
     public function updateData($method, request $Request)
     {
-        if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
+        //echo($Request->input('randKey'));
+        //echo($Request->input('uName'));
+        $checkRes = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true);
+        //dd($checkRes);
+        if (!$checkRes) {
             return response()->json([
                 'status' => 'warning',
                 'msg' => '权限不足'
@@ -342,9 +354,11 @@ class LostAndFoundController extends Controller
         $imgId[2] = isset($imgId[2]) ? $imgId[2] : 0;
         $imgStatus = DB::update('update lf_img set is_used = 0 where id in (?,?,?)', $imgId);
         $keyWord = $Request['keyWord'];
+        //echo(123);
+        //dd($keyWord);
         $startTime = isset($Request['startTime']) ? $Request['startTime'] : 0;
         $endTime = isset($Request['endTime']) ? $Request['endTime'] : time();
-        $status = $Request['status'] ? $Request['status'] : 1;
+        $status = isset($Request['status']) ? $Request['status'] : 1;
         $searchKey = isset($Request['searchKey']) ? $Request['searchKey'] : 1;
         switch (isset($searchKey) ? $searchKey : 1) {
             case 1:
@@ -479,6 +493,8 @@ class LostAndFoundController extends Controller
      */
     private function checkAdmin($key = null, $name = null, $return = false)
     {
+        //var_dump($key);
+        //var_dump($name);
         if (strlen($key) != 24 || strlen($name) < 5 || $key == NULL || $name == null || $name > 9) {
             if ($return) {
                 return 0;
@@ -490,11 +506,19 @@ class LostAndFoundController extends Controller
             }
         }
         $realKey = substr($key, 7, 8);
+        //dd($realKey);
         try {
-            $res = DB::table($this->tableadmin)->where('name', $name)->where('login_key', $realKey)->first();
+            $res = DB::table($this->tableadmin)->where('name', $name)->where('login_key', $realKey)->get();
+            //dd($res);
+            if(!$res)
+            {
+                return false;
+            }else {
+                return true;
+            }
         } catch (Exception $e) {
             if ($return) {
-                return 0;
+                return false;
             }
             return response()->json([
                 'status' => 'error',
@@ -562,7 +586,10 @@ class LostAndFoundController extends Controller
     public function login(Request $Request, $login_key = null)
     {
         if (!isset($Request['name']) || (!isset($Request['pass']))) {
-            return 0;
+            return response()->json([
+                'status'=>'error',
+                'msg'=>'参数异常'
+            ]);
         }
         $name = $Request['name'];
         $pass = $Request['pass'];

@@ -215,6 +215,14 @@ class ArticleController extends Controller
             }
         }
     }
+    public function publicShowIm($user_id = 0)
+    {
+        $imgData =  Picture::where('user_id', $user_id)->get();
+        if (is_null($imgData)) {
+            return response()->json(["messg" => 'Record not found!'], 404);
+        }
+        return response()->json($imgData, 200);
+    }
 
     protected function respond($code, $message, $data = null)
     {

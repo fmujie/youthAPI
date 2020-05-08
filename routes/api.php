@@ -276,10 +276,10 @@ $api->version('v1', [
 
     //失物招领 Lost and found 取首字母 laf
     $api->post('laf/insertdata/{method}', 'LostAndFoundController@finderOrTheOwnerRelease');        //添加数据
-    $api->get('laf/deletedata/{id}/{method}', 'LostAndFoundController@deleteOneData');              //删除数据
+    $api->post('laf/deletedata/{id}/{method}', 'LostAndFoundController@deleteOneData');              //删除数据
     $api->post('laf/updatedata/{method}', 'LostAndFoundController@updateData');                     //修改状态码updateReleaseStatus
     $api->post('laf/updatestatus/{method}', 'LostAndFoundController@updateReleaseStatus');          //修改数据 状态码updateReleaseStatus
-    $api->get('laf/searchdata/{method}', 'LostAndFoundController@getDataBy');                       //查找数据
+    $api->post('laf/searchdata/{method}', 'LostAndFoundController@getDataBy');                       //查找数据
     $api->get('laf/getdata/{method}/', 'LostAndFoundController@gainFinderOrTheOwnerReleaseInfor');  //获取数据
     $api->post('laf/login/{login_key?}', 'LostAndFoundController@login');                           //登录
     $api->post('laf/delImg/{img}', 'LostAndFoundController@delImg');                                //删除图片
@@ -321,6 +321,9 @@ $api->version(
         // 删除token
         $api->delete('qq/authorizations/current', 'LoginController@destroy')
             ->name('qq.authorizations.destroy');
+        //测试
+        $api->get('public/image/show', 'ArticleController@publicShowIm');
+        //测试
 
         $api->group(['middleware' => 'auth:qq'], function ($api) {
             // 当前登录用户信息
