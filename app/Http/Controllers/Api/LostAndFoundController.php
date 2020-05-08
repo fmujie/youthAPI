@@ -57,7 +57,7 @@ class LostAndFoundController extends Controller
         if ($method == 1) {
             $insertResult = DB::table($this->tablelost)->insert(
                 [
-                    'lost_name' => (string)$thingName,
+                    'lost_name' => (string) $thingName,
                     'lost_time' => $time,
                     'lost_place' => $place,
                     'lost_detail' => $detail,
@@ -80,7 +80,8 @@ class LostAndFoundController extends Controller
                     'found_phone' => $phoneNumber,
                     'found_status' => $status,
                     'created_at' => date(now())
-                ]);
+                ]
+            );
         }
         if ($insertResult) {
             return response()->json([
@@ -114,10 +115,10 @@ class LostAndFoundController extends Controller
             ], 200);
         }
         //if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
-          //  return response()->json([
-            //    'status' => 'warning',
-              //  'msg' => '权限不足'
-           // ], 200);
+        //  return response()->json([
+        //    'status' => 'warning',
+        //  'msg' => '权限不足'
+        // ], 200);
         //}
         if ($method == 1) {
             $deleteresults = DB::delete("delete from $this->tablelost where id = ?", [$id]);
@@ -219,7 +220,7 @@ class LostAndFoundController extends Controller
         $imgs = isset($Request['imgs']) ? $Request['imgs'] : null;
         $thingImg = null;
         $hasData = false;
-        if (strlen($someThing) >= 0 || strlen($time) > 0 || strlen($place) > 0 || strlen($detail) > 0 || (integer)$status == (1 || 2)) {
+        if (strlen($someThing) >= 0 || strlen($time) > 0 || strlen($place) > 0 || strlen($detail) > 0 || (int) $status == (1 || 2)) {
             $hasData = true;
         }
         if (!isset($Request['id'])) {
@@ -250,30 +251,30 @@ class LostAndFoundController extends Controller
             }
         } else
             if ($method == 2 && $hasData) {
-                if ($someThing) {
-                    $updateData['found_name'] = $someThing;
-                }
-                if ($time) {
-                    $updateData['found_time'] = $time;
-                }
-                if ($place) {
-                    $updateData['found_place'] = $place;
-                }
-                if ($detail) {
-                    $updateData['found_detail'] = $detail;
-                }
-                if ($status) {
-                    $updateData['found_status'] = $status;
-                }
-                if ($imgs) {
-                    $updateData['found_img'] = $imgs;
-                }
-            } else {
-                return response()->json([
-                    'status' => 'error',
-                    'msg' => '无效数据'
-                ], 200);
+            if ($someThing) {
+                $updateData['found_name'] = $someThing;
             }
+            if ($time) {
+                $updateData['found_time'] = $time;
+            }
+            if ($place) {
+                $updateData['found_place'] = $place;
+            }
+            if ($detail) {
+                $updateData['found_detail'] = $detail;
+            }
+            if ($status) {
+                $updateData['found_status'] = $status;
+            }
+            if ($imgs) {
+                $updateData['found_img'] = $imgs;
+            }
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'msg' => '无效数据'
+            ], 200);
+        }
         if (!isset($updateData) || !sizeof($updateData)) {
             return response()->json([
                 'status' => 'error',
@@ -310,8 +311,7 @@ class LostAndFoundController extends Controller
     {
         $dataImg = [];
         switch ($method) {
-            case 2:
-                {
+            case 2: {
                     $datas = DB::table($this->tablefound)->orderBy('id', 'desc')->paginate(6);
                     foreach ($datas as $data) {
                         $img = explode("|", $data->found_img);
@@ -323,8 +323,7 @@ class LostAndFoundController extends Controller
                     $dataImgAll = DB::table($this->tableimage)->orderBy('id', 'desc')->wherein('id', $dataImgId)->get();
                     break;
                 }
-            default :
-                {
+            default: {
                     $datas = DB::table($this->tablelost)->orderBy('id', 'desc')->paginate(6);
                     foreach ($datas as $data) {
                         $img = explode("|", $data->lost_img);
@@ -348,18 +347,15 @@ class LostAndFoundController extends Controller
      */
     public function getDataBy(Request $Request, $method = 1)
     {
-        $imgId = [];
-        $imgId[0] = isset($imgId[0]) ? $imgId[0] : 0;
-        $imgId[1] = isset($imgId[1]) ? $imgId[1] : 0;
-        $imgId[2] = isset($imgId[2]) ? $imgId[2] : 0;
-        $imgStatus = DB::update('update lf_img set is_used = 0 where id in (?,?,?)', $imgId);
         $keyWord = $Request['keyWord'];
-        //echo(123);
-        //dd($keyWord);
         $startTime = isset($Request['startTime']) ? $Request['startTime'] : 0;
         $endTime = isset($Request['endTime']) ? $Request['endTime'] : time();
         $status = isset($Request['status']) ? $Request['status'] : 1;
         $searchKey = isset($Request['searchKey']) ? $Request['searchKey'] : 1;
+
+        $dataImg = null;
+        $dataImgAll = null;
+
         switch (isset($searchKey) ? $searchKey : 1) {
             case 1:
                 $searchKey = 'name';
@@ -370,34 +366,38 @@ class LostAndFoundController extends Controller
             case 3:
                 $searchKey = 'detail';
                 break;
-            default :
+            default:
                 $searchKey = 'name';
         }
+
         if ($method == 1) {
-            $datas = DB::table($this->tablelost)->whereBetween('lost_time', array((integer)$startTime, (integer)$endTime))->where("lost_{$searchKey}", 'like', "%$keyWord%")->where('lost_status', $status)->paginate(6);
+            $datas = DB::table($this->tablelost)->whereBetween('lost_time', array((int) $startTime, (int) $endTime))->where("lost_{$searchKey}", 'like', "%$keyWord%")->where('lost_status', $status)->paginate(6);
             foreach ($datas as $data) {
                 $img = explode("|", $data->lost_img);
                 foreach ($img as $data) {
                     $dataImg[] = $data;
                 }
             }
-            $dataImgId = array_unique($dataImg);
-            $dataImgAll = DB::table($this->tableimage)->orderBy('id', 'desc')->wherein('id', $dataImgId)->get();
-        } else
-            if ($method == 2) {
-                $datas = DB::table($this->tablefound)->whereBetween('found_time', array((integer)$startTime, (integer)$endTime))->where("found_{$searchKey}", 'like', "%$keyWord%")->where('found_status', $status)->paginate(6);
-                foreach ($datas as $data) {
-                    $img = explode("|", $data->found_img);
-                    foreach ($img as $data) {
-                        $dataImg[] = $data;
-                    }
-                }
-                $dataImgId = array_unique($dataImg);
+
+            $dataImgId = $dataImg ? array_unique($dataImg) : false;
+            if ($dataImgId)
                 $dataImgAll = DB::table($this->tableimage)->orderBy('id', 'desc')->wherein('id', $dataImgId)->get();
-            } else {
-                return response()->json(['error' => '查询失败'], 201);
+        } elseif ($method == 2) {
+            $datas = DB::table($this->tablefound)->whereBetween('found_time', array((int) $startTime, (int) $endTime))->where("found_{$searchKey}", 'like', "%$keyWord%")->where('found_status', $status)->paginate(6);
+            foreach ($datas as $data) {
+                $img = explode("|", $data->found_img);
+                foreach ($img as $data) {
+                    $dataImg[] = $data;
+                }
             }
-        if ($data) {
+            $dataImgId = $dataImg ? array_unique($dataImg) : false;
+            if ($dataImgId)
+
+                $dataImgAll = DB::table($this->tableimage)->orderBy('id', 'desc')->wherein('id', $dataImgId)->get();
+        } else {
+            return response()->json(['error' => '查询失败'], 201);
+        }
+        if ($datas) {
             return response()->json([$datas, 'imgs' => $dataImgAll], 200);
         }
     }
@@ -510,10 +510,9 @@ class LostAndFoundController extends Controller
         try {
             $res = DB::table($this->tableadmin)->where('name', $name)->where('login_key', $realKey)->get();
             //dd($res);
-            if(!$res)
-            {
+            if (!$res) {
                 return false;
-            }else {
+            } else {
                 return true;
             }
         } catch (Exception $e) {
@@ -524,8 +523,7 @@ class LostAndFoundController extends Controller
                 'status' => 'error',
                 'msg' => '非法访问'
             ]);
-        }
-        {
+        } {
             if ($return) {
                 return ($res || isset($res->power)) ? $res->power : 0;
             }
@@ -587,8 +585,8 @@ class LostAndFoundController extends Controller
     {
         if (!isset($Request['name']) || (!isset($Request['pass']))) {
             return response()->json([
-                'status'=>'error',
-                'msg'=>'参数异常'
+                'status' => 'error',
+                'msg' => '参数异常'
             ]);
         }
         $name = $Request['name'];
