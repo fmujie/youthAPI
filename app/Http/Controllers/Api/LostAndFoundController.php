@@ -347,6 +347,14 @@ class LostAndFoundController extends Controller
      */
     public function getDataBy(Request $Request, $method = 1)
     {
+        $searchId = $Request['searchId'];
+        $judgeIdRes = false;
+        if(!$searchId){
+            $judgeIdRes = false;
+        }else {
+            $judgeIdRes = true;
+        }
+        // dd($judgeIdRes);
         $keyWord = $Request['keyWord'];
         $startTime = isset($Request['startTime']) ? $Request['startTime'] : 0;
         $endTime = isset($Request['endTime']) ? $Request['endTime'] : time();
@@ -371,7 +379,11 @@ class LostAndFoundController extends Controller
         }
 
         if ($method == 1) {
-            $datas = DB::table($this->tablelost)->whereBetween('lost_time', array((int) $startTime, (int) $endTime))->where("lost_{$searchKey}", 'like', "%$keyWord%")->where('lost_status', $status)->paginate(6);
+            if($judgeIdRes){
+                $datas = DB::table($this->tablelost)->where('id', $searchId)->get();
+            }else {
+                $datas = DB::table($this->tablelost)->whereBetween('lost_time', array((int) $startTime, (int) $endTime))->where("lost_{$searchKey}", 'like', "%$keyWord%")->where('lost_status', $status)->paginate(6);
+            }
             foreach ($datas as $data) {
                 $img = explode("|", $data->lost_img);
                 foreach ($img as $data) {
@@ -383,7 +395,11 @@ class LostAndFoundController extends Controller
             if ($dataImgId)
                 $dataImgAll = DB::table($this->tableimage)->orderBy('id', 'desc')->wherein('id', $dataImgId)->get();
         } elseif ($method == 2) {
-            $datas = DB::table($this->tablefound)->whereBetween('found_time', array((int) $startTime, (int) $endTime))->where("found_{$searchKey}", 'like', "%$keyWord%")->where('found_status', $status)->paginate(6);
+            if($judgeIdRes){
+                $datas = DB::table($this->tablefound)->where('id', $searchId)->get();
+            } else {
+                $datas = DB::table($this->tablefound)->whereBetween('found_time', array((int) $startTime, (int) $endTime))->where("found_{$searchKey}", 'like', "%$keyWord%")->where('found_status', $status)->paginate(6);
+            }
             foreach ($datas as $data) {
                 $img = explode("|", $data->found_img);
                 foreach ($img as $data) {
