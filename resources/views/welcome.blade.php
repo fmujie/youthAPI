@@ -5,7 +5,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>youthAPI</title>
+        
+        <link rel="shortcut icon" href="/_upload/tpl/05/c2/1474/template1474/images/favicon.ico" type="image/x-icon" />
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -79,15 +81,15 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    Welcome to youthol API
                 </div>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="https://www.sdut.edu.cn/">School Homepage</a>
+                    <a href="https://youth.sdut.edu.cn/">Homepage</a>
+                    <a href="https://youthoa.sdut.edu.cn/#/">OA Office System</a>
+                    <a href="https://youthlab.sdut.edu.cn/app/wechat-service/home/#/">Student Services</a>
+                    <a href="https://github.com/youthol/youthAPI">GitHub</a>
                 </div>
             </div>
         </div>

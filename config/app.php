@@ -169,6 +169,7 @@ return [
          */
         Fmujie\BaiduSpeech\BaiduSpeechServiceProvider::class,
         Fmujie\TulingApi\TulingApiServiceProvider::class,
+        Fmujie\BaiduFace\BaiduFaceServiceProvider::class,
         /*
          * Application Service Providers...
          */

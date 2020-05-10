@@ -144,6 +144,8 @@ $api->version('v1', [
     //签到签退
     $api->get('oa/signin', 'OAController@getSigninLists');  //获取当天签到列表
     $api->post('oa/signin', 'OAController@updateSignRecord');  //签到、签退
+    //OA前台人脸签到
+    $api->post('oa/facesignin/faceRec', 'FaceRecController@faceRec');
     $api->get('oa/signin/export', 'OAController@exportSignRecord')
         ->middleware('api.auth');      //签到记录导出
 
@@ -226,6 +228,7 @@ $api->version('v1', [
         ->middleware('api.auth'); //删除对应周次卫生成绩,接收weeks参数为数组
     $api->post('oa/hygiene/import', 'OAController@importHygiene')
         ->middleware('api.auth');        //宿舍卫生成绩导入
+    //OA前台交互
     $api->post('oa/reception/conversation', 'ConversationController@conversation');  // 与用户交互（文本交流）
     $api->post('oa/reception/speechSynthesis', 'ConversationController@speechSynthesis'); // 语音合成（百度AI语音合成）
     //OA办公系统结束
