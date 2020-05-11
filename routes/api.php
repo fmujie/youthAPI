@@ -145,10 +145,13 @@ $api->version('v1', [
     $api->get('oa/signin', 'OAController@getSigninLists');  //获取当天签到列表
     $api->post('oa/signin', 'OAController@updateSignRecord');  //签到、签退
     //OA前台人脸签到
-    $api->post('oa/facesignin/faceRec', 'FaceRecController@faceRec');
+    $api->post('oa/facesignin/facerec', 'FaceRecController@faceRec');
+    //OA前台人脸数据
+    $api->post('oa/face/reg', 'FaceRecController@faceReg');  //注册
+    $api->delete('oa/face/del', 'FaceRecController@faceDel');  //删除
+    
     $api->get('oa/signin/export', 'OAController@exportSignRecord')
         ->middleware('api.auth');      //签到记录导出
-
 
     //日程管理
     $api->get('oa/schedules', 'OAController@getSchedules');   //获取日程列表

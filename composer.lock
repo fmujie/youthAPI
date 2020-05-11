@@ -918,16 +918,16 @@
         },
         {
             "name": "fmujie/baiduface",
-            "version": "1.0.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fmujie/baiduFace.git",
-                "reference": "eb86d83cf65d207079dc7aa0f499b2b65047ffaa"
+                "reference": "3e6e98fe0298de5bc77e2a2e558673ff5bee6270"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fmujie/baiduFace/zipball/eb86d83cf65d207079dc7aa0f499b2b65047ffaa",
-                "reference": "eb86d83cf65d207079dc7aa0f499b2b65047ffaa",
+                "url": "https://api.github.com/repos/fmujie/baiduFace/zipball/3e6e98fe0298de5bc77e2a2e558673ff5bee6270",
+                "reference": "3e6e98fe0298de5bc77e2a2e558673ff5bee6270",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -956,7 +956,7 @@
                 }
             ],
             "description": "Face recognition API integrated with Baidu AI open platform",
-            "time": "2020-05-10T04:10:01+00:00"
+            "time": "2020-05-10T09:48:06+00:00"
         },
         {
             "name": "fmujie/tuling",

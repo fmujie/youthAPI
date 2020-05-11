@@ -74,4 +74,4 @@ $ php artisan jwt:secret
 | [phpseclib/phpseclib](https://github.com/phpseclib/phpseclib) | 各种加密功能（本项目用于RSA加密）  | 教务处登录所用（获取Module和Exponent生成RSA公钥进行密码加密） |
 | socialiteproviders/weixin                                    | 微信登录包                         | 微信登录绑定                                                 |
 | [spatie/laravel-permission](https://github.com/laravel/socialite) | 权限管理系统                       | 办公系统                                                     |
-
+| [fmujie/baiduface](https://github.com/fmujie/baiduFace)      | 人脸签到                           | 办公系统                                                     |

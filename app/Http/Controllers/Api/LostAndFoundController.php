@@ -107,19 +107,12 @@ class LostAndFoundController extends Controller
     public function deleteOneData(request $Request, $id, $method)
     {
         $checkRes = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true);
-        //dd($checkRes);
         if (!$checkRes) {
             return response()->json([
                 'status' => 'warning',
                 'msg' => '权限不足'
             ], 200);
         }
-        //if (!$this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true)) {
-        //  return response()->json([
-        //    'status' => 'warning',
-        //  'msg' => '权限不足'
-        // ], 200);
-        //}
         if ($method == 1) {
             $deleteresults = DB::delete("delete from $this->tablelost where id = ?", [$id]);
         } else if ($method == 2) {
@@ -202,10 +195,7 @@ class LostAndFoundController extends Controller
      */
     public function updateData($method, request $Request)
     {
-        //echo($Request->input('randKey'));
-        //echo($Request->input('uName'));
         $checkRes = $this->checkAdmin($Request->input('randKey'), $Request->input('uName'), true);
-        //dd($checkRes);
         if (!$checkRes) {
             return response()->json([
                 'status' => 'warning',
@@ -354,13 +344,12 @@ class LostAndFoundController extends Controller
         }else {
             $judgeIdRes = true;
         }
-        // dd($judgeIdRes);
+
         $keyWord = $Request['keyWord'];
         $startTime = isset($Request['startTime']) ? $Request['startTime'] : 0;
         $endTime = isset($Request['endTime']) ? $Request['endTime'] : time();
         $status = isset($Request['status']) ? $Request['status'] : 1;
         $searchKey = isset($Request['searchKey']) ? $Request['searchKey'] : 1;
-
         $dataImg = null;
         $dataImgAll = null;
 
@@ -382,7 +371,7 @@ class LostAndFoundController extends Controller
             if($judgeIdRes){
                 $datas = DB::table($this->tablelost)->where('id', $searchId)->get();
             }else {
-                $datas = DB::table($this->tablelost)->whereBetween('lost_time', array((int) $startTime, (int) $endTime))->where("lost_{$searchKey}", 'like', "%$keyWord%")->where('lost_status', $status)->paginate(6);
+                $datas = DB::table($this->tablelost)->whereBetween('lost_time', [$startTime, $endTime])->where("lost_{$searchKey}", 'like', "%$keyWord%")->where('lost_status', $status)->get();
             }
             foreach ($datas as $data) {
                 $img = explode("|", $data->lost_img);
@@ -398,7 +387,7 @@ class LostAndFoundController extends Controller
             if($judgeIdRes){
                 $datas = DB::table($this->tablefound)->where('id', $searchId)->get();
             } else {
-                $datas = DB::table($this->tablefound)->whereBetween('found_time', array((int) $startTime, (int) $endTime))->where("found_{$searchKey}", 'like', "%$keyWord%")->where('found_status', $status)->paginate(6);
+                $datas = DB::table($this->tablefound)->whereBetween('found_time', [$startTime, $endTime])->where("found_{$searchKey}", 'like', "%$keyWord%")->where('found_status', $status)->get();
             }
             foreach ($datas as $data) {
                 $img = explode("|", $data->found_img);
@@ -509,8 +498,6 @@ class LostAndFoundController extends Controller
      */
     private function checkAdmin($key = null, $name = null, $return = false)
     {
-        //var_dump($key);
-        //var_dump($name);
         if (strlen($key) != 24 || strlen($name) < 5 || $key == NULL || $name == null || $name > 9) {
             if ($return) {
                 return 0;
@@ -522,10 +509,8 @@ class LostAndFoundController extends Controller
             }
         }
         $realKey = substr($key, 7, 8);
-        //dd($realKey);
         try {
             $res = DB::table($this->tableadmin)->where('name', $name)->where('login_key', $realKey)->get();
-            //dd($res);
             if (!$res) {
                 return false;
             } else {
