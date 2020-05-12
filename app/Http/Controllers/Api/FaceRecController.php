@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\FaceRec;
+use App\Models\OaYouthUser;
 use Illuminate\Http\Request;
 use Fmujie\BaiduFace\BaiduFaceApi;
 use App\Http\Controllers\Controller;
@@ -21,7 +22,7 @@ class FaceRecController extends Controller
             'status' => 'error',
             'msg' => null
         ];
-    
+
     /**
      * 人脸认证
      *
@@ -34,7 +35,7 @@ class FaceRecController extends Controller
         $userId = $request->user_id;
         $base64Content = $request->base64_content;
 
-        $faceRecModel = new FaceRec;
+        $faceRecModel = new FaceRec();
         $currentUser = FaceRec::where('user_id', $userId)->first();
         if (is_null($currentUser)) {
             $this->return['msg'] = '没有找到该用户的入库数据';
@@ -74,34 +75,38 @@ class FaceRecController extends Controller
     {
         $base64Content = $request->base64_content;
         $userId = $request->user_id;
-        $userName = $request->user_name;
 
-        $currentUser = FaceRec::where('user_id', $userId)->first();
+        $youthStationClerk = OaYouthUser::where('sdut_id', $userId)->first();
+        if (is_null($youthStationClerk)) {
+            $this->return['msg'] = '该用户非正式成员,暂无权限录入信息';
+        } else {
+            $faceRecModel = new FaceRec();
+            $currentUser = $faceRecModel->where('user_id', $userId)->first();
 
-        if (is_null($currentUser))
-        {
-            $regRes = BaiduFaceApi::faceRegistration($base64Content, $this->group, $userId, 'BASE64', true);
-            if ($regRes['code'] == 1) {
-                $faceRecModel = new FaceRec;
-                $faceRecModel->user_id = $userId;
-                $faceRecModel->user_name = $userName;
-                $faceRecModel->face_token = $regRes['face_token'];
-                $insertRes = $faceRecModel->save();
-                if ($insertRes) {
-                    $this->return['code'] = 1;
-                    $this->return['status'] = 'success';
-                    $this->return['msg'] = '人脸数据录入成功';
-                    $this->statusCode = 201;
+            if (is_null($currentUser))
+            {
+                $regRes = BaiduFaceApi::faceRegistration($base64Content, $this->group, $userId, 'BASE64', true);
+                if ($regRes['code'] == 1) {
+                    $faceRecModel->user_id = $userId;
+                    $faceRecModel->user_name = $youthStationClerk->name;
+                    $faceRecModel->face_token = $regRes['face_token'];
+                    $insertRes = $faceRecModel->save();
+                    if ($insertRes) {
+                        $this->return['code'] = 1;
+                        $this->return['status'] = 'success';
+                        $this->return['msg'] = '人脸数据录入成功';
+                        $this->statusCode = 201;
+                    } else {
+                        $this->return['msg'] = '用户信息入库失败';
+                    }
                 } else {
-                    $this->return['msg'] = '用户信息入库失败';
+                    $this->return['msg'] = $regRes['msg'];
                 }
             } else {
-                $this->return['msg'] = $regRes['msg'];
+                $this->return['msg'] = '该用户数据已存在';
             }
-        } else {
-            $this->return['msg'] = '该用户数据已存在';
         }
-
+        
         return response()->json([
             'result' => $this->return
         ], $this->statusCode);
@@ -116,7 +121,9 @@ class FaceRecController extends Controller
     public function faceDel(FaceDelRequest $request)
     {
         $userId = $request->user_id;
-        $currentUser = FaceRec::where('user_id', $userId)->first();
+
+        $faceRecModel = new FaceRec();
+        $currentUser = $faceRecModel->where('user_id', $userId)->first();
 
         if(is_null($currentUser)) {
             $this->return['msg'] = '数据库中没有该用户信息';
@@ -142,5 +149,48 @@ class FaceRecController extends Controller
         return response()->json([
             'result' => $this->return
         ], $this->statusCode);
+    }
+
+    /**
+     * 注册列表获取
+     * @return response
+     */
+    public function getUserList()
+    {
+        $returned = [
+            'result' => $this->return,
+            'data' => null
+        ];
+
+        $faceRecModel = new FaceRec();
+        $userData = $faceRecModel->orderBy('created_at','DESC')->get();
+        $dataNum = count($userData);
+
+        if ($dataNum == 0) {
+            $this->return['msg'] = '暂无任何数据';
+        } else {
+            foreach ($userData as $key => $value) {
+                $username[] = $value->oayouthuser->name;
+                $department[] = $value->oayouthuser->department;
+                $grade[] = $value->oayouthuser->grade;
+            }
+            
+            $returnListData = [];
+            for ($i = 0; $i < $dataNum; $i++)
+            {
+                array_push($returnListData, [
+                    'username' => $username[$i], 
+                    'department' => $department[$i], 
+                    'grade' => $grade[$i]
+                ]);
+            }
+            $this->return['code'] = 1;
+            $this->return['status'] = 'success';
+            $this->return['msg'] = '获取用户列表成功';
+            $returned['data'] = $returnListData;
+        }
+        $returned['result'] = $this->return;
+        
+        return response()->json($returned, $this->statusCode);
     }
 }
