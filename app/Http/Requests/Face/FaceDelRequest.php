@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Face;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,7 +24,7 @@ class FaceDelRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|min:11|max:11',
+            'user_id' => 'required|string|min:11|max:11',
         ];
     }
 }

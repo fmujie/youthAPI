@@ -6,14 +6,15 @@ use App\Models\FaceRec;
 use Illuminate\Http\Request;
 use Fmujie\BaiduFace\BaiduFaceApi;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FaceRecRequest;
-use App\Http\Requests\FaceRegRequest;
-use App\Http\Requests\FaceDelRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Face\FaceRecRequest;
+use App\Http\Requests\Face\FaceRegRequest;
+use App\Http\Requests\Face\FaceDelRequest;
 
 class FaceRecController extends Controller
 {
     private $group = 'youthol';
+    private $statusCode = 200;
 
     private $return = [
             'code' => 0,
@@ -37,6 +38,7 @@ class FaceRecController extends Controller
         $currentUser = FaceRec::where('user_id', $userId)->first();
         if (is_null($currentUser)) {
             $this->return['msg'] = '没有找到该用户的入库数据';
+            $this->statusCode = 404;
         } else {
             $recRes = BaiduFaceApi::searchFaceUid($base64Content, $this->group, $userId, 'BASE64', true);
             if ($recRes['code'] == 1)
@@ -57,7 +59,7 @@ class FaceRecController extends Controller
         }
         return response()->json([
             'result' => $this->return
-        ]);
+        ], $this->statusCode);
     }
 
     /**
@@ -89,6 +91,7 @@ class FaceRecController extends Controller
                     $this->return['code'] = 1;
                     $this->return['status'] = 'success';
                     $this->return['msg'] = '人脸数据录入成功';
+                    $this->statusCode = 201;
                 } else {
                     $this->return['msg'] = '用户信息入库失败';
                 }
@@ -101,7 +104,7 @@ class FaceRecController extends Controller
 
         return response()->json([
             'result' => $this->return
-        ]);
+        ], $this->statusCode);
     }
 
     /**
@@ -117,6 +120,7 @@ class FaceRecController extends Controller
 
         if(is_null($currentUser)) {
             $this->return['msg'] = '数据库中没有该用户信息';
+            $this->statusCode = 404;
         } else {
             $faceToken = $currentUser->face_token;
             $delRes = BaiduFaceApi::faceDelete($userId, $this->group, $faceToken);
@@ -126,6 +130,7 @@ class FaceRecController extends Controller
                     $this->return['code'] = 1;
                     $this->return['status'] = 'success';
                     $this->return['msg'] = '人脸库数据删除成功';
+                    $this->statusCode = 204;
                 } else {
                     $this->return['msg'] = '入库数据未清空,请联系管理员手动删除,用户id:'."$userId";
                 }
@@ -136,6 +141,6 @@ class FaceRecController extends Controller
 
         return response()->json([
             'result' => $this->return
-        ]);
+        ], $this->statusCode);
     }
 }

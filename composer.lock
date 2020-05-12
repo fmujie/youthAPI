@@ -548,16 +548,16 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "ab5de36233a1995f9c776c741b803eb8207aebef"
+                "reference": "4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/ab5de36233a1995f9c776c741b803eb8207aebef",
-                "reference": "ab5de36233a1995f9c776c741b803eb8207aebef",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3",
+                "reference": "4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -628,7 +628,7 @@
                 "uppercase",
                 "words"
             ],
-            "time": "2020-05-06T11:01:57+00:00"
+            "time": "2020-05-09T15:09:09+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -960,16 +960,16 @@
         },
         {
             "name": "fmujie/tuling",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fmujie/tuLingApi.git",
-                "reference": "c85ef36b8b498d7254117df14878b5dd106c77ae"
+                "reference": "ce8ab323bfcc8d0061737ddea658d80ccf71ca05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fmujie/tuLingApi/zipball/c85ef36b8b498d7254117df14878b5dd106c77ae",
-                "reference": "c85ef36b8b498d7254117df14878b5dd106c77ae",
+                "url": "https://api.github.com/repos/fmujie/tuLingApi/zipball/ce8ab323bfcc8d0061737ddea658d80ccf71ca05",
+                "reference": "ce8ab323bfcc8d0061737ddea658d80ccf71ca05",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -998,7 +998,7 @@
                 }
             ],
             "description": "Packaging Turing API for larael",
-            "time": "2020-05-08T11:35:25+00:00"
+            "time": "2020-05-12T05:43:05+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Interact;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FaceRegRequest extends FormRequest
+class SynthesisRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,20 @@ class FaceRegRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_name' => 'required',
-            'user_id' => 'required|min:11|max:11',
-            'base64_content' => 'required'
+            'txtInfo' => 'required|string|min:1',
         ];
     }
+
+    /**
+    * 获取已定义的验证规则的错误消息。
+    *
+    * @return array
+    */
+    public function messages()
+    {
+        return [
+            'txtInfo.required' => 'txtInfo is required, Do not less than one character',
+        ];
+    }
+
 }
