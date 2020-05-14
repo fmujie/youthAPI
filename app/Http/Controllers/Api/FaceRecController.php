@@ -169,21 +169,15 @@ class FaceRecController extends Controller
         if ($dataNum == 0) {
             $this->return['msg'] = '暂无任何数据';
         } else {
-            foreach ($userData as $key => $value) {
-                $username[] = $value->oayouthuser->name;
-                $department[] = $value->oayouthuser->department;
-                $grade[] = $value->oayouthuser->grade;
-            }
-            
             $returnListData = [];
-            for ($i = 0; $i < $dataNum; $i++)
-            {
+            foreach ($userData as $key => $value) {
                 array_push($returnListData, [
-                    'username' => $username[$i], 
-                    'department' => $department[$i], 
-                    'grade' => $grade[$i]
+                    'username' => $value->oayouthuser->name, 
+                    'department' => $value->oayouthuser->department, 
+                    'grade' => $value->oayouthuser->grade,
                 ]);
             }
+            
             $this->return['code'] = 1;
             $this->return['status'] = 'success';
             $this->return['msg'] = '获取用户列表成功';

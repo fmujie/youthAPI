@@ -24,7 +24,7 @@ class FaceRegRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|string|min:11|max:11',
+            'user_id' => 'required|unique|string|min:11|max:11',
             'base64_content' => 'required|string'
         ];
     }

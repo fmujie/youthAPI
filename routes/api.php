@@ -294,6 +294,11 @@ $api->version('v1', [
     $api->post('laf/upload/Image', 'LostAndFoundController@uploadImg');                             //展示图片
     //失物招领结束
 
+    // 心愿树
+    $api->post('wishtree/write', 'WishTreeController@addData'); //添加数据
+    $api->get('wishtree/getlist/{requirement?}', 'WishTreeController@getData'); //获取数据列表
+    $api->get('wishtree/shaker/{shaknum?}', 'WishTreeController@shaker');  //摇色子
+
     //小程序API
 
     // 纳新
