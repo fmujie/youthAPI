@@ -147,9 +147,12 @@ $api->version('v1', [
     //OA前台人脸签到
     $api->post('oa/facesignin/facerec', 'FaceRecController@faceRec');
     //OA前台人脸数据
-    $api->post('oa/face/reg', 'FaceRecController@faceReg');  //注册
-    $api->delete('oa/face/del', 'FaceRecController@faceDel');  //删除
-    $api->get('oa/face/userlist', 'FaceRecController@getUserList');  //获取注册face的user列表
+    $api->post('oa/face/reg', 'FaceRecController@faceReg')
+        ->middleware('api.auth');  //注册
+    $api->delete('oa/face/del', 'FaceRecController@faceDel')
+        ->middleware('api.auth');  //删除
+    $api->get('oa/face/userlist', 'FaceRecController@getUserList')
+        ->middleware('api.auth');  //获取注册face的user列表
     
     $api->get('oa/signin/export', 'OAController@exportSignRecord')
         ->middleware('api.auth');      //签到记录导出
