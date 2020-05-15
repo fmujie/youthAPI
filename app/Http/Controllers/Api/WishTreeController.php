@@ -25,6 +25,7 @@ class WishTreeController extends Controller
         $wishModel->user_demand = $userDemand;
 
         $userName = is_null($request->user_name) ? '匿名' : $request->user_name;
+        $userClass = is_null($request->user_class) ? '' : $request->user_class;
         $conMethod = is_null($request->con_method) ? '' : $request->con_method;
         $conDetail = is_null($request->con_detail) ? '' : $request->con_detail;
         $wish = is_null($request->wish) ? '' : $request->wish;
@@ -34,6 +35,7 @@ class WishTreeController extends Controller
             $this->return['msg'] = 'Wish and regret cannot be empty at the same time';
         } else {
             $wishModel->user_name = $userName;
+            $wishModel->user_class = $userClass;
             $wishModel->con_method = $conMethod;
             $wishModel->con_detail = $conDetail;
             switch ($userDemand) {
@@ -152,7 +154,8 @@ class WishTreeController extends Controller
         foreach ($shakeData as $key => $value) {
             array_push($returnList, [
                     'id' => $value->id,
-                    'userName' => $value->user_name, 
+                    'userName' => $value->user_name,
+                    'userClass' => $value->user_class,
                     'conMethod' => $value->con_method, 
                     'conDetail' => $value->con_detail,
                     'wishData' => $value->wish,
@@ -176,31 +179,35 @@ class WishTreeController extends Controller
             if (is_null($wishDataList)) {
                 array_push($regretDataList, [
                     'id' => $value->id,
-                    'userName' => $value->user_name, 
-                    'conMethod' => $value->con_method, 
+                    'userName' => $value->user_name,
+                    'userClass' => $value->user_class,
+                    'conMethod' => $value->con_method,
                     'conDetail' => $value->con_detail,
                     'regretData' => $value->regret,
                 ]);
             } elseif (is_null($regretDataList)) {
                 array_push($wishDataList, [
                     'id' => $value->id,
-                    'userName' => $value->user_name, 
-                    'conMethod' => $value->con_method, 
+                    'userName' => $value->user_name,
+                    'userClass' => $value->user_class,
+                    'conMethod' => $value->con_method,
                     'conDetail' => $value->con_detail,
                     'wishData' => $value->wish,
                 ]);
             } else {
                 array_push($wishDataList, [
                     'id' => $value->id,
-                    'userName' => $value->user_name, 
-                    'conMethod' => $value->con_method, 
+                    'userName' => $value->user_name,
+                    'userClass' => $value->user_class,
+                    'conMethod' => $value->con_method,
                     'conDetail' => $value->con_detail,
                     'wishData' => $value->wish,
                 ]);
                 array_push($regretDataList, [
                     'id' => $value->id,
-                    'userName' => $value->user_name, 
-                    'conMethod' => $value->con_method, 
+                    'userName' => $value->user_name,
+                    'userClass' => $value->user_class,
+                    'conMethod' => $value->con_method,
                     'conDetail' => $value->con_detail,
                     'regretData' => $value->regret,
                 ]);
@@ -216,8 +223,9 @@ class WishTreeController extends Controller
         foreach ($data as $key => $value) {
             array_push($dataArr, [
                 'id' => $value->id,
-                'userName' => $value->user_name, 
-                'conMethod' => $value->con_method, 
+                'userName' => $value->user_name,
+                'userClass' => $value->user_class,
+                'conMethod' => $value->con_method,
                 'conDetail' => $value->con_detail,
                 $dataName.'Data' => $value->$dataName,
             ]);

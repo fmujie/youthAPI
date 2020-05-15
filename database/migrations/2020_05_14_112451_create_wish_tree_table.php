@@ -16,6 +16,7 @@ class CreateWishTreeTable extends Migration
         Schema::create('wish_tree', function (Blueprint $table) {
             $table->increments('id');
             $table->string('user_name')->default('匿名');
+            $table->string('user_class')->nullable();
             $table->string('con_method')->nullable();
             $table->string('con_detail')->nullable();
             $table->integer('user_demand')->default(0);
