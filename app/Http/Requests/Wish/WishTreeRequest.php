@@ -24,7 +24,6 @@ class WishTreeRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_name' => 'required|string|min:2|max:10',
             'user_demand' => 'required'
         ];
     }

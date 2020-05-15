@@ -24,6 +24,7 @@ class WishTreeController extends Controller
         $wishModel = new WishTree();
         $wishModel->user_demand = $userDemand;
 
+        $userName = is_null($request->user_name) ? '匿名' : $request->user_name;
         $conMethod = is_null($request->con_method) ? '' : $request->con_method;
         $conDetail = is_null($request->con_detail) ? '' : $request->con_detail;
         $wish = is_null($request->wish) ? '' : $request->wish;
@@ -32,6 +33,7 @@ class WishTreeController extends Controller
         if (empty($wish) && empty($regret)) {
             $this->return['msg'] = 'Wish and regret cannot be empty at the same time';
         } else {
+            $wishModel->user_name = $userName;
             $wishModel->con_method = $conMethod;
             $wishModel->con_detail = $conDetail;
             switch ($userDemand) {
