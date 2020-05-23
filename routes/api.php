@@ -318,6 +318,9 @@ $api->version('v1', [
     $api->get('getAllProvinceData2019nCoV', 'MiniProgramController@getAllProvinceData2019nCoV');
     $api->get('getProvinceData2019nCoV/{provinceName}', 'MiniProgramController@getProvinceData2019nCoV');
 
+    // 2020毕业贺卡
+    $api->post('graduationgreetingcard', 'GreetingCardController@Public'); // 通用
+
     //测试
     $api->post('test', 'Featurecontroller@test');
     $api->get('service/test', 'FeatureController@index');
