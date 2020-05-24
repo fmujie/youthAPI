@@ -24,12 +24,12 @@ class WishTreeController extends Controller
         $wishModel = new WishTree();
         $wishModel->user_demand = $userDemand;
 
-        $userName = is_null($request->user_name) ? '匿名' : $request->user_name;
-        $userClass = is_null($request->user_class) ? '' : $request->user_class;
-        $conMethod = is_null($request->con_method) ? '' : $request->con_method;
-        $conDetail = is_null($request->con_detail) ? '' : $request->con_detail;
         $wish = is_null($request->wish) ? '' : $request->wish;
         $regret = is_null($request->regret) ? '' : $request->regret;
+        $conDetail = is_null($request->con_detail) ? '' : $request->con_detail;
+        $userClass = is_null($request->user_class) ? '' : $request->user_class;
+        $conMethod = is_null($request->con_method) ? '' : $request->con_method;
+        $userName = is_null($request->user_name) ? '匿名' : $request->user_name;
 
         if (empty($wish) && empty($regret)) {
             $this->return['msg'] = 'Wish and regret cannot be empty at the same time';
@@ -167,7 +167,6 @@ class WishTreeController extends Controller
             'result' => $this->return,
             'data' => $returnList
         ], $this->statusCode);
-
     }
 
     private static function separateArr($data, $wishDataList = null, $regretDataList = null)
