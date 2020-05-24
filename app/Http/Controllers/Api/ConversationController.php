@@ -41,11 +41,7 @@ class ConversationController extends Controller
 
         $result = BaiduSpeech::combine($text, $userID, $lan, $speed, $pitch, $volume, $person);
 
-        if ($result['code'] == 1) {
-            return response()->json([
-                'result' => $result
-            ], $this->statusCode);
-        } else {
+        if ($result['code'] != 1) {
             $this->return['msg'] = $result['msg'];
         }
 

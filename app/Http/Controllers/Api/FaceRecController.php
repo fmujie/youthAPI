@@ -78,7 +78,7 @@ class FaceRecController extends Controller
 
         $youthStationClerk = OaYouthUser::where('sdut_id', $userId)->first();
         if (is_null($youthStationClerk)) {
-            $this->return['msg'] = '该用户非正式成员,暂无权限录入信息';
+            $this->return['msg'] = '该用户非正式站员,暂无权限录入信息';
         } else {
             $faceRecModel = new FaceRec();
             $currentUser = $faceRecModel->where('user_id', $userId)->first();
