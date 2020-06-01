@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\WishTree;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\WishTree;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\Wish\WishTreeRequest;
 
 class WishTreeController extends Controller
@@ -31,6 +32,22 @@ class WishTreeController extends Controller
         $conMethod = is_null($request->con_method) ? '' : $request->con_method;
         $userName = is_null($request->user_name) ? '匿名' : $request->user_name;
 
+        $rules = [
+            'con_detail' => 'required|min:5|max:24'
+        ];
+        $curArr = [
+            "con_detail" => $request->con_detail
+        ];
+        if ($conDetail != '') {
+            $validator = Validator::make($curArr, $rules);
+            if ($validator->fails()) {
+                $this->return['msg'] = $validator->errors(); 
+                return response()->json([
+                    'result' => $this->return
+                ], $this->statusCode);
+            }
+        }
+        
         if (empty($wish) && empty($regret)) {
             $this->return['msg'] = 'Wish and regret cannot be empty at the same time';
         } else {
@@ -43,6 +60,7 @@ class WishTreeController extends Controller
                     if (empty($wish)) {
                         $this->return['msg'] = 'Wish field is empty';
                     } else {
+                        $this->judgeLen($wish);
                         $wishModel->wish = $wish;
                     }
                     break;
@@ -50,6 +68,7 @@ class WishTreeController extends Controller
                     if (empty($regret)) {
                         $this->return['msg'] = 'Regret field is empty';
                     } else {
+                        $this->judgeLen($regret);
                         $wishModel->regret = $regret;
                     }
                     break;
@@ -59,6 +78,8 @@ class WishTreeController extends Controller
                     } else {
                         $wishModel->wish = $wish;
                         $wishModel->regret =$regret;
+                        $this->judgeLen($wish);
+                        $this->judgeLen($regret);
                     }
                     break;
                 default:
@@ -230,6 +251,16 @@ class WishTreeController extends Controller
             ]);
         }
         return $dataArr;
+    }
+
+    private function judgeLen($data) {
+        $len = strlen($data);
+        if ($len > 200) {
+            $this->return['msg'] = '超出字数限制，上限100字符';
+        }
+        if ($len < 5) {
+            $this->return['msg'] = '超出字数限制，下限5字符';
+        }
     }
 
 }
